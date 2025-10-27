@@ -5,153 +5,258 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rock Paper Scissors</title>
   <style>
+    /* Style for game buttons (Rock, Paper, Scissors) */
     .button-style {
       align-content: center;
-      height: 20vh;
-      width: 10%;
-      margin-left: 12.5%;
-      margin-right: 10%;
-      font-size: 120%;
-      border-radius: 10%;
-      cursor: pointer;
-      transition: transform 120ms ease, box-shadow 120ms ease;
-      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.06);
+      height: 100px;                /* Slightly smaller circular buttons */
+      width: 100px;                 /* Equal width to maintain circle */
+      border-radius: 12px;          /* Rounded but professional corners */
+      cursor: pointer;              /* Shows hand cursor on hover */
+      transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;  /* Smooth animation */
+      border: 1px solid rgba(16,42,67,0.08);  /* Soft border for definition */
+      background: linear-gradient(180deg,#ffffff,#f7f9ff); /* Slight surface gradient */
+      box-shadow: 0 8px 18px rgba(16,42,67,0.06);  /* Subtle elevation */
+      display: flex;                /* Flexible layout for content */
+      flex-direction: column;       /* Stack content vertically */
+      align-items: center;          /* Center horizontally */
+      justify-content: center;      /* Center vertically */
+      gap: 6px;                     /* Space between emoji and label */
+      padding: 10px;                /* Inner spacing */
+      min-width: 90px;
+      min-height: 90px;
     }
 
+    /* Emoji inside buttons */
+    .btn-emoji { font-size: 32px; line-height: 1; display:block; }
+
+    /* Label inside buttons */
+    .btn-label { font-size: 0.95rem; font-weight: 600; color: var(--primary); }
+
+    /* Typography: base font sizing and heading scale for a professional look */
+    :root{
+      --bg: linear-gradient(135deg, #6e8efb, #a777e3);
+      --surface: rgba(255,255,255,0.95);
+      --muted: #64748b;
+      --primary: #102a43;
+      --radius: 12px;
+      --radius-lg: 24px;
+    }
+
+    html { font-size: 16px; }
+
+    /* Center align all headings and paragraphs and set sizes */
     h2,
     h3,
     p {
       text-align: center;
+      margin: 0 0 8px 0;
     }
 
+    h2 { font-size: 1.75rem; line-height: 1.1; margin-bottom: 6px; color: var(--primary); }
+    h3 { font-size: 1.05rem; font-weight: 600; color: var(--muted); margin-bottom: 14px; }
+    p  { font-size: 0.95rem; color: #334155; }
+
+    /* Main body styles */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background: linear-gradient(180deg, #f7f9fc, #e9f0ff);
-      color: #102a43;
-      padding: 18px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;  /* System fonts */
+      background: var(--bg);  /* Gradient background using variable */
+      color: #102a43;              /* Dark text color */
+      padding: 18px;               /* Space around content */
+      min-height: 100vh;           /* Full viewport height */
+      margin: 0;                   /* Remove default margin */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Main game container */
     .game-wrap {
-      max-width: 720px;
-      margin: 12px auto;
-      background: #fff;
-      padding: 18px 22px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(16, 42, 67, 0.06);
+      max-width: 720px;            /* Limit width on large screens */
+      margin: 30px auto;           /* Center horizontally with top/bottom margin */
+      background: var(--surface);  /* Use surface variable for consistency */
+      padding: 32px;               /* Inner spacing */
+      border-radius: var(--radius-lg);         /* Rounded corners */
+      box-shadow: 0 20px 40px rgba(16, 42, 67, 0.08);  /* Soft shadow */
+      backdrop-filter: blur(8px);  /* Frosted glass effect */
     }
 
+    /* Container for game buttons */
     .controls {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 12px 0;
+      display: flex;               /* Horizontal layout */
+      justify-content: center;     /* Center buttons */
+      gap: 12px;                  /* Space between buttons */
+      margin: 12px 0;             /* Vertical margin */
     }
 
+    /* Container for move display boxes */
     .move-display {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      margin-top: 8px;
-      gap: 12px;
+      display: flex;               /* Horizontal layout */
+      justify-content: space-around; /* Even spacing */
+      align-items: center;         /* Vertical centering */
+      margin-top: 8px;            /* Top margin */
+      gap: 12px;                  /* Space between boxes */
     }
 
+    /* Individual move display box */
     .move-box {
-      width: 42%;
-      background: #f1f6ff;
-      border-radius: 8px;
-      padding: 12px;
-      text-align: center;
-      font-size: 120%;
-      min-height: 86px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      width: 42%;                 /* Width relative to container */
+      background: linear-gradient(to bottom, #ffffff, #f8f9ff);  /* Subtle gradient */
+      border-radius: 16px;        /* Rounded corners */
+      padding: 24px;              /* Inner spacing */
+      text-align: center;         /* Center text */
+      font-size: 1rem;            /* Standard readable size */
+      min-height: 100px;         /* Minimum height */
+      display: flex;             /* Flexible layout */
+      flex-direction: column;    /* Stack content vertically */
+      align-items: center;       /* Center horizontally */
+      justify-content: center;   /* Center vertically */
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);  /* Subtle shadow */
+      border: 1px solid rgba(0, 0, 0, 0.05);  /* Very subtle border */
     }
 
+    /* Style for emoji in move boxes */
     .move-emoji {
-      font-size: 48px;
-      display: block;
-      line-height: 1;
+      font-size: 56px;           /* Larger emoji for the move display */
+      display: block;            /* Full width */
+      line-height: 1;            /* Compact line height */
     }
 
+    /* Style for move text label */
     .move-label {
-      text-transform: capitalize;
-      margin-top: 6px;
-      color: #0f172a;
-      font-weight: 600;
+      text-transform: capitalize;  /* Capitalize first letter */
+      margin-top: 6px;             /* Space above label */
+      color: #0f172a;              /* Dark text color */
+      font-weight: 700;            /* Bold for clarity */
+      font-size: 1rem;             /* Slightly larger label */
     }
 
+    /* Game result text style */
     .result {
-      font-weight: 700;
-      margin-top: 12px;
-      font-size: 110%;
+      font-weight: 700;            /* Bold text */
+      margin-top: 12px;            /* Space above */
+      font-size: 1rem;             /* Standard readable size */
+      color: var(--primary);
+      letter-spacing: 0.2px;
     }
 
+    /* Win result color */
     .result.win {
-      color: #0f5132;
+      color: #0f5132;              /* Dark green */
     }
 
+    /* Lose result color */
     .result.lose {
-      color: #7b1e1e;
+      color: #7b1e1e;              /* Dark red */
     }
 
+    /* Tie result color */
     .result.tie {
-      color: #444;
+      color: #444;                 /* Dark gray */
     }
 
+    /* Score display container */
     .score-box {
-      text-align: center;
-      margin-top: 8px;
-      color: #334155;
-      font-weight: 600;
+      text-align: center;          /* Center align text */
+      margin-top: 8px;            /* Space above */
+      color: #334155;             /* Dark blue-gray */
+      font-weight: 600;           /* Semi-bold text */
+      font-size: 0.95rem;         /* Slightly smaller than heading */
     }
 
+    /* Reset button style */
     .btn-reset {
-      background: #fff7f7;
-      border: 1px solid #ffd6d6;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
+      background: #ff4757;        /* Bright red background */
+      color: white;               /* White text */
+      border: none;               /* No border */
+      padding: 12px 24px;         /* Horizontal padding */
+      border-radius: 12px;        /* Rounded corners */
+      cursor: pointer;            /* Hand cursor */
+      font-weight: 600;          /* Semi-bold text */
+      transition: all 0.3s ease;  /* Smooth animation */
+      box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);  /* Red tinted shadow */
+    }
+    
+    /* Reset button hover effect */
+    .btn-reset:hover {
+      background: #ff6b81;        /* Lighter red */
+      transform: translateY(-2px); /* Slight lift */
+      box-shadow: 0 6px 16px rgba(255, 71, 87, 0.4);  /* Enhanced shadow */
+    }
+    
+    /* Reset button click effect */
+    .btn-reset:active {
+      transform: translateY(0);    /* Return to original position */
+      box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);  /* Reduced shadow */
     }
 
+    /* Game button hover effect */
+    .button-style:hover {
+      transform: translateY(-4px);  /* Lift effect */
+      box-shadow: 0 12px 20px rgba(16,42,67,0.12);  /* Enhanced shadow */
+      background: linear-gradient(180deg,#f8fbff,#eef4ff); /* Slightly blue tint */
+    }
+    
+    /* Game button click effect */
     .button-style:active {
-      transform: translateY(2px);
-      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.04);
+      transform: translateY(0);     /* Return to position */
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);  /* Reduced shadow */
     }
 
+    /* Flash animation class */
     .flash {
-      animation: flash 360ms ease;
+      animation: flash 360ms ease;  /* Quick pop animation */
     }
 
+    /* Flash animation keyframes */
     @keyframes flash {
       0% {
-        transform: scale(1);
+        transform: scale(1);        /* Start size */
       }
 
       50% {
-        transform: scale(1.06);
+        transform: scale(1.06);     /* Grow slightly */
       }
 
       100% {
-        transform: scale(1);
+        transform: scale(1);        /* Return to original */
       }
     }
 
+    /* Mobile responsive styles */
     @media (max-width: 520px) {
-      .button-style {
-        width: 28%;
-        font-size: 100%;
-        height: 14vh;
+      .game-wrap {
+        padding: 20px;             /* Reduced padding */
+        margin: 10px;              /* Reduced margin */
       }
-      .move-box{width:46%;}
+      .button-style {
+        width: 90px;               /* Smaller buttons */
+        height: 90px;
+        font-size: 24px;           /* Smaller text */
+        padding: 15px;             /* Less padding */
+      }
+      .move-box {
+        width: 46%;                /* Wider boxes */
+        padding: 15px;             /* Less padding */
+      }
+      .controls {
+        gap: 8px;                  /* Less space between */
+      }
+      .move-emoji {
+        font-size: 36px;           /* Smaller emoji */
+      }
     }
   </style>
 
   <script>
+    // Game state object to track scores
     const score = { wins: 0, loses: 0, ties: 0 };
+    
+    // Emoji mapping for each move
     const emoji = { rock: '✊', paper: '✋', scissors: '✌️' };
 
+    /**
+     * Generate computer's move randomly
+     * @returns {string} 'rock', 'paper', or 'scissors'
+     */
     function compMove() {
       const randomNum = Math.random();
       if (randomNum < 1 / 3) return 'rock';
@@ -159,13 +264,19 @@
       return 'scissors';
     }
 
+    /**
+     * Update the game display with latest moves and result
+     * @param {string} result - Game result ('Win', 'Lose', 'Tied', or 'No games yet')
+     * @param {string} computerMove - Computer's move
+     * @param {string} playerMove - Player's move
+     */
     function updateDisplay(result, computerMove, playerMove) {
       const resultEl = document.querySelector('.result');
       const scoreEl = document.getElementById('score');
       const playerBox = document.getElementById('player-move');
       const computerBox = document.getElementById('computer-move');
 
-      // Set result text
+      // Update result text and styling
       if (resultEl) {
         resultEl.textContent = typeof result === 'string' ? `You ${result}.` : 'You Played';
         resultEl.classList.remove('win', 'lose', 'tie');
@@ -175,7 +286,7 @@
         else if (result === 'No games yet') resultEl.classList.remove('win', 'lose', 'tie');
       }
 
-      // Player box
+      // Update player's move display
       if (playerBox) {
         const emojiEl = playerBox.querySelector('.move-emoji');
         const labelEl = playerBox.querySelector('.move-label');
@@ -183,7 +294,7 @@
         labelEl.textContent = playerMove ? playerMove : '';
       }
 
-      // Computer box
+      // Update computer's move display
       if (computerBox) {
         const emojiEl = computerBox.querySelector('.move-emoji');
         const labelEl = computerBox.querySelector('.move-label');
@@ -191,7 +302,7 @@
         labelEl.textContent = computerMove ? computerMove : '';
       }
 
-      // Flash animation
+      // Add flash animation to move boxes
       if (playerBox) {
         playerBox.classList.add('flash');
         setTimeout(() => playerBox.classList.remove('flash'), 360);
@@ -201,13 +312,19 @@
         setTimeout(() => computerBox.classList.remove('flash'), 360);
       }
 
+      // Update score display
       if (scoreEl) scoreEl.textContent = `Wins: ${score.wins} — Losses: ${score.loses} — Ties: ${score.ties}`;
     }
 
+    /**
+     * Handle game play logic
+     * @param {string} move - Player's move ('rock', 'paper', or 'scissors')
+     */
     function playGame(move) {
       const computerMove = compMove();
       let result;
 
+      // Determine game result based on player and computer moves
       if (move === 'rock') {
         result = computerMove === 'rock' ? 'Tied' : computerMove === 'paper' ? 'Lose' : 'Win';
       } else if (move === 'paper') {
@@ -216,18 +333,26 @@
         result = computerMove === 'scissors' ? 'Tied' : computerMove === 'rock' ? 'Lose' : 'Win';
       }
 
+      // Update score based on result
       if (result === 'Win') score.wins += 1;
       else if (result === 'Lose') score.loses += 1;
       else score.ties += 1;
 
+      // Log result to console and update display
       console.log(`You ${result}. Computer: ${computerMove}, You: ${move}`, score);
       updateDisplay(result, computerMove, move);
     }
 
+    /**
+     * Reset game score and display
+     */
     function resetScore() {
+      // Reset score counters
       score.wins = 0;
       score.loses = 0;
       score.ties = 0;
+      
+      // Clear move displays
       const playerBox = document.getElementById('player-move');
       const computerBox = document.getElementById('computer-move');
       if (playerBox) {
@@ -238,9 +363,12 @@
         computerBox.querySelector('.move-emoji').textContent = '';
         computerBox.querySelector('.move-label').textContent = '';
       }
+      
+      // Reset display to initial state
       updateDisplay('No games yet', '', '');
     }
 
+    // Initialize game display when page loads
     document.addEventListener('DOMContentLoaded', () => {
       updateDisplay('No games yet', '', '');
     });
@@ -253,9 +381,18 @@
     <h3>Pick your move</h3>
 
     <div class="controls">
-      <button class="button-style" onclick="playGame('rock');">✊ Rock</button>
-      <button class="button-style" onclick="playGame('paper');">✋ Paper</button>
-      <button class="button-style" onclick="playGame('scissors');">✌️ Scissors</button>
+      <button class="button-style" onclick="playGame('rock');">
+        <span class="btn-emoji">✊</span>
+        <span class="btn-label">Rock</span>
+      </button>
+      <button class="button-style" onclick="playGame('paper');">
+        <span class="btn-emoji">✋</span>
+        <span class="btn-label">Paper</span>
+      </button>
+      <button class="button-style" onclick="playGame('scissors');">
+        <span class="btn-emoji">✌️</span>
+        <span class="btn-label">Scissors</span>
+      </button>
     </div>
 
     <div class="move-display">
