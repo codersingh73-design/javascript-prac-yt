@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors - Code Visualization</title>
+    <!-- Include Mermaid for flowcharts -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 { color: #1e293b; }
+        .visualization-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        #executionSteps {
+            font-family: monospace;
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .step {
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 3px solid #60a5fa;
+            background: #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-vars {
+            font-size: 0.9em;
+            color: #94a3b8;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px solid #475569;
+        }
+        .var-change {
+            color: #22c55e;
+        }
+        .function-call {
+            color: #60a5fa;
+        }
+        .current-step {
+            border-left-color: #22c55e;
+            background: #1e40af;
+        }
+        .data-flow {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e293b;
+            border-radius: 8px;
+            color: #e2e8f0;
+        }
+        .state-viewer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .state-box {
+            background: #334155;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+        }
+        .state-box h3 {
+            margin: 0 0 10px 0;
+            color: #94a3b8;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .state-content {
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rock Paper Scissors - Code Visualization</h1>
+        
+        <div class="visualization-section">
+            <h2>Game Logic Flowchart</h2>
+            <div class="mermaid">
+                graph TD
+                    A[Start Game] --> B[Player Selects Move]
+                    B --> C[Generate Computer's Move]
+                    C --> D{Compare Moves}
+                    D -->|Rock vs Scissors| E[Player Wins]
+                    D -->|Paper vs Rock| E[Player Wins]
+                    D -->|Scissors vs Paper| E[Player Wins]
+                    D -->|Same Move| F[Tie]
+                    D -->|Computer Wins| G[Player Loses]
+                    E --> H[Update Score]
+                    F --> H[Update Score]
+                    G --> H[Update Score]
+                    H --> I[Update Display]
+                    I --> J[Add Flash Animation]
+                    J --> K[Wait for Next Move]
+            </div>
+        </div>
+
+        <div class="visualization-section">
+            <h2>Function Call Sequence</h2>
+            <div class="mermaid">
+                sequenceDiagram
+                    participant P as Player
+                    participant G as Game Logic
+                    participant C as Computer
+                    participant D as Display
+                    
+                    P->>G: Click Move Button
+                    G->>C: Generate Move
+                    G->>G: Calculate Result
+                    G->>D: Update Score
+                    G->>D: Show Moves
+                    D->>D: Flash Animation
+                    D-->>P: Show Final Result
+            </div>
+        </div>
+
+        <div class="visualization-section">
+            <h2>Data Flow Diagram</h2>
+            <div class="mermaid">
+                graph TD
+                    subgraph Variables
+                        score[score Object]
+                        emoji[emoji Object]
+                        move[move Parameter]
+                        computerMove[computerMove]
+                        result[result]
+                    end
+                    
+                    subgraph Functions
+                        playGame[playGame Function]
+                        compMove[compMove Function]
+                        updateDisplay[updateDisplay Function]
+                    end
+                    
+                    subgraph DOM
+                        button[Button Click]
+                        resultEl[Result Element]
+                        scoreEl[Score Element]
+                        playerBox[Player Box]
+                        computerBox[Computer Box]
+                    end
+                    
+                    button --> |triggers| playGame
+                    playGame --> |calls| compMove
+                    compMove --> |returns| computerMove
+                    playGame --> |updates| score
+                    playGame --> |calls| updateDisplay
+                    updateDisplay --> |modifies| resultEl
+                    updateDisplay --> |modifies| scoreEl
+                    updateDisplay --> |modifies| playerBox
+                    updateDisplay --> |modifies| computerBox
+            </div>
+        </div>
+
+        <div class="visualization-section">
+            <h2>Step-by-Step Execution with Variable States</h2>
+            <div id="executionSteps"></div>
+            <div class="state-viewer">
+                <div class="state-box">
+                    <h3>Game State</h3>
+                    <div id="gameState" class="state-content"></div>
+                </div>
+                <div class="state-box">
+                    <h3>DOM State</h3>
+                    <div id="domState" class="state-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true });
+
+        // Game state simulation
+        let gameState = {
+            score: { wins: 0, loses: 0, ties: 0 },
+            currentMove: null,
+            computerMove: null,
+            result: null
+        };
+
+        // DOM state simulation
+        let domState = {
+            resultText: 'No games yet',
+            scoreText: 'Wins: 0 — Losses: 0 — Ties: 0',
+            playerEmoji: '',
+            computerEmoji: ''
+        };
+
+        // Detailed execution steps with variable states
+        const steps = [
+            {
+                description: "1. Player clicks 'Rock' button",
+                action: "Event Trigger",
+                vars: {
+                    event: "click",
+                    target: "rock button",
+                    handler: "playGame('rock')"
+                }
+            },
+            {
+                description: "2. playGame('rock') is called",
+                action: "Function Call",
+                vars: {
+                    move: "rock",
+                    gameState: "initializing"
+                }
+            },
+            {
+                description: "3. compMove() generates random move",
+                action: "Random Generation",
+                vars: {
+                    randomNum: "Math.random()",
+                    computerMove: "paper"
+                }
+            },
+            {
+                description: "4. Compare moves to determine winner",
+                action: "Logic Evaluation",
+                vars: {
+                    playerMove: "rock",
+                    computerMove: "paper",
+                    result: "Lose"
+                }
+            },
+            {
+                description: "5. Update score object",
+                action: "State Update",
+                vars: {
+                    previousScore: "{ wins: 0, loses: 0, ties: 0 }",
+                    newScore: "{ wins: 0, loses: 1, ties: 0 }"
+                }
+            },
+            {
+                description: "6. updateDisplay() called",
+                action: "Function Call",
+                vars: {
+                    result: "Lose",
+                    computerMove: "paper",
+                    playerMove: "rock"
+                }
+            },
+            {
+                description: "7. Update result text and classes",
+                action: "DOM Update",
+                vars: {
+                    resultText: "You Lose.",
+                    addedClass: "lose"
+                }
+            },
+            {
+                description: "8. Update move displays with emojis",
+                action: "DOM Update",
+                vars: {
+                    playerEmoji: "✊",
+                    computerEmoji: "✋"
+                }
+            },
+            {
+                description: "9. Add flash animation",
+                action: "Animation",
+                vars: {
+                    animation: "flash 360ms ease",
+                    elements: "playerBox, computerBox"
+                }
+            },
+            {
+                description: "10. Update score display",
+                action: "DOM Update",
+                vars: {
+                    scoreText: "Wins: 0 — Losses: 1 — Ties: 0"
+                }
+            }
+        ];
+
+        const stepsContainer = document.getElementById('executionSteps');
+        const gameStateEl = document.getElementById('gameState');
+        const domStateEl = document.getElementById('domState');
+        let currentStep = 0;
+
+        function updateState(step) {
+            // Update game state based on step
+            if (step.vars.computerMove) {
+                gameState.computerMove = step.vars.computerMove;
+            }
+            if (step.vars.result) {
+                gameState.result = step.vars.result;
+            }
+            if (step.vars.newScore) {
+                gameState.score = JSON.parse(step.vars.newScore);
+            }
+
+            // Update DOM state based on step
+            if (step.vars.resultText) {
+                domState.resultText = step.vars.resultText;
+            }
+            if (step.vars.scoreText) {
+                domState.scoreText = step.vars.scoreText;
+            }
+            if (step.vars.playerEmoji) {
+                domState.playerEmoji = step.vars.playerEmoji;
+            }
+            if (step.vars.computerEmoji) {
+                domState.computerEmoji = step.vars.computerEmoji;
+            }
+
+            // Display states
+            gameStateEl.textContent = JSON.stringify(gameState, null, 2);
+            domStateEl.textContent = JSON.stringify(domState, null, 2);
+        }
+
+        function displaySteps() {
+            stepsContainer.innerHTML = steps.map((step, index) => `
+                <div class="step ${index === currentStep ? 'current-step' : ''}">
+                    <div class="step-content">
+                        <div>${step.description}</div>
+                        <div class="step-vars">
+                            <span class="function-call">${step.action}</span>
+                            ${Object.entries(step.vars).map(([key, value]) => 
+                                `<br>${key}: <span class="var-change">${value}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            updateState(steps[currentStep]);
+        }
+
+        function nextStep() {
+            currentStep = (currentStep + 1) % steps.length;
+            displaySteps();
+        }
+
+        // Initial display
+        displaySteps();
+
+        // Advance steps every 3 seconds (slightly longer to read the details)
+        setInterval(nextStep, 3000);
+    </script>
+</body>
+</html>
