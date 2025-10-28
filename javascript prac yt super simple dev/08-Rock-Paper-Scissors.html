@@ -247,8 +247,12 @@
   </style>
 
   <script>
-    // Game state object to track scores
-    const score = { wins: 0, loses: 0, ties: 0 };
+    // Game state object to track scores and moves
+    const gameState = JSON.parse(localStorage.getItem('gameState')) || {
+      score: { wins: 0, loses: 0, ties: 0 },
+      lastGame: { playerMove: '', computerMove: '', result: 'No games yet' }
+    };
+    const score = gameState.score;
     
     // Emoji mapping for each move
     const emoji = { rock: '✊', paper: '✋', scissors: '✌️' };
@@ -338,6 +342,20 @@
       else if (result === 'Lose') score.loses += 1;
       else score.ties += 1;
 
+
+/*
+      //save score on localStorage take only string  ,setItem('name','value'), getItem('name'), removeItem('name')
+      // for converting the object to string use JSON.stringify() and for converting string to object use JSON.parse()
+      // Save game state including moves and result
+      //for objects to get value or iniciate it we use objectname.keyname or objectname['keyname'] in this keyname is string.
+      //if the object key and value are same like { computerMove: computerMove } we can just write like { computerMove }.
+
+      */
+      gameState.lastGame = { playerMove: move, computerMove, result};
+      localStorage.setItem('gameState', JSON.stringify(gameState));
+
+
+
       // Log result to console and update display
       console.log(`You ${result}. Computer: ${computerMove}, You: ${move}`, score);
       updateDisplay(result, computerMove, move);
@@ -351,6 +369,8 @@
       score.wins = 0;
       score.loses = 0;
       score.ties = 0;
+      gameState.lastGame = { playerMove: '', computerMove: '', result: 'No games yet' };
+      localStorage.setItem('gameState', JSON.stringify(gameState));
       
       // Clear move displays
       const playerBox = document.getElementById('player-move');
@@ -370,7 +390,8 @@
 
     // Initialize game display when page loads
     document.addEventListener('DOMContentLoaded', () => {
-      updateDisplay('No games yet', '', '');
+      const { result, computerMove, playerMove } = gameState.lastGame;
+      updateDisplay(result, computerMove, playerMove);
     });
   </script>
 </head>
