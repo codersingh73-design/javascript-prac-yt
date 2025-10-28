@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM Explorer</title>
+    <style>
+        .output {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .highlight {
+            background-color: yellow;
+        }
+        .demo-controls {
+            margin: 10px 0;
+        }
+        .demo-result {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+        <h1>DOM Objects Explorer</h1>
+        <button id="explore-button">Explore DOM</button>
+        <div id="output" class="output"></div>
+
+        <div class="output">
+            <h2>innerHTML vs textContent Demo</h2>
+            <div class="demo-controls">
+                <button id="inner-html-demo">Test innerHTML</button>
+                <button id="text-content-demo">Test textContent</button>
+            </div>
+            <div id="demo-output" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        // Get our output element
+        const output = document.getElementById('output');
+        const button = document.getElementById('explore-button');
+
+        function displayProperty(name, value) {
+            return `<div><strong>${name}:</strong> ${value}</div>`;
+        }
+
+        button.addEventListener('click', () => {
+            let html = '<h2>Document Object:</h2>';
+            
+            // Document properties
+            html += displayProperty('document.title', document.title);
+            html += displayProperty('document.URL', document.URL);
+            html += displayProperty('document.doctype', document.doctype);
+            html += displayProperty('document.readyState', document.readyState);
+            html += displayProperty('document.characterSet', document.characterSet);
+            
+            html += '<h2>Body Object:</h2>';
+            
+            // Body properties
+            html += displayProperty('document.body.tagName', document.body.tagName);
+            html += displayProperty('document.body.nodeType', document.body.nodeType);
+            html += displayProperty('document.body.childNodes.length', document.body.childNodes.length);
+            html += displayProperty('document.body.className', document.body.className);
+            
+            html += '<h2>getElementById Example:</h2>';
+            
+            // Get our main content div
+            const mainContent = document.getElementById('main-content');
+            
+            html += displayProperty('mainContent.id', mainContent.id);
+            html += displayProperty('mainContent.innerHTML.length', mainContent.innerHTML.length);
+            html += displayProperty('mainContent.children.length', mainContent.children.length);
+            
+            html += '<h2>innerHTML Example:</h2>';
+            
+            // Create a test element
+            const testDiv = document.createElement('div');
+            testDiv.innerHTML = '<span class="highlight">Test Content</span>';
+            
+            html += displayProperty('testDiv.innerHTML', testDiv.innerHTML);
+            html += displayProperty('testDiv.textContent', testDiv.textContent);
+            html += displayProperty('testDiv.firstChild.nodeType', testDiv.firstChild.nodeType);
+
+            // Display all our findings
+            output.innerHTML = html;
+
+            // Demonstrate some document methods
+            console.log('Document Methods Demo:');
+            console.log('getElementsByTagName("div"):', document.getElementsByTagName('div'));
+            console.log('getElementsByClassName("output"):', document.getElementsByClassName('output'));
+            console.log('querySelector("#output"):', document.querySelector('#output'));
+            console.log('querySelectorAll("div"):', document.querySelectorAll('div'));
+        });
+
+        // Add some helpful comments about these objects
+        console.log(`
+        Key DOM Objects and Their Common Uses:
+
+        document:
+        - Root of the DOM
+        - Methods: getElementById, querySelector, createElement
+        - Properties: body, head, title, URL
+
+        document.body:
+        - Represents <body> element
+        - Properties: innerHTML, className, id
+        - Methods: appendChild, removeChild
+
+        getElementById:
+        - Returns single element with matching ID
+        - Returns null if no match
+        - Fastest way to get a specific element
+
+        innerHTML:
+        - Gets/Sets HTML content
+        - Can contain HTML tags
+        - Alternative to textContent (plain text only)
+        `);
+
+        // innerHTML vs textContent Demo
+        const demoOutput = document.getElementById('demo-output');
+        const htmlButton = document.getElementById('inner-html-demo');
+        const textButton = document.getElementById('text-content-demo');
+
+        const testHTML = `
+            <div style="color: blue;">
+                <h3>Test Heading</h3>
+                <ul>
+                    <li>HTML <b>tags</b> included</li>
+                    <li>Styling <span style="color: red;">works</span></li>
+                    <li>Structure is preserved</li>
+                </ul>
+            </div>
+        `;
+
+        htmlButton.addEventListener('click', () => {
+            demoOutput.innerHTML = `
+                <h4>innerHTML Example:</h4>
+                <div class="demo-result">
+                    <p>Using innerHTML (HTML tags are parsed):</p>
+                    ${testHTML}
+                    <p>Raw HTML string:</p>
+                    <pre>${testHTML.replace(/</g, '&lt;')}</pre>
+                </div>
+            `;
+        });
+
+        textButton.addEventListener('click', () => {
+            demoOutput.innerHTML = `
+                <h4>textContent Example:</h4>
+                <div class="demo-result">
+                    <p>Using textContent (HTML tags shown as text):</p>
+                    <pre>${testHTML}</pre>
+                    <p>Result if we used textContent:</p>
+                    <div class="output">${document.createElement('div').textContent = testHTML}</div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
