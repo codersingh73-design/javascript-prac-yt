@@ -349,7 +349,9 @@
       // Save game state including moves and result
       //for objects to get value or iniciate it we use objectname.keyname or objectname['keyname'] in this keyname is string.
       //if the object key and value are same like { computerMove: computerMove } we can just write like { computerMove }.
-
+      //destructing of object is like we can extract multiple properties from object and assign them to variables.
+      // like const computerMove = gameState.lastGame.computerMove; const playerMove = gameState.lastGame.playerMove; can be written as
+      // const { computerMove, playerMove } = gameState.lastGame;
       */
       gameState.lastGame = { playerMove: move, computerMove, result};
       localStorage.setItem('gameState', JSON.stringify(gameState));
