@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sync Todo List Across Devices - Full Examples</title>
+  <style>
+    body { font-family: sans-serif; background: #f8fafc; margin: 0; padding: 0; }
+    h1 { color: #6366f1; text-align: center; }
+    .tabs { display: flex; justify-content: center; margin: 2rem 0 1rem 0; }
+    .tab-btn { background: #fff; border: 1px solid #6366f1; color: #6366f1; padding: 0.5rem 1.5rem; cursor: pointer; border-radius: 8px 8px 0 0; margin: 0 2px; font-weight: bold; }
+    .tab-btn.active { background: #6366f1; color: #fff; }
+    .tab-content { display: none; max-width: 500px; margin: 0 auto; background: #fff; border-radius: 0 0 10px 10px; box-shadow: 0 2px 8px #0001; padding: 2rem; }
+    .tab-content.active { display: block; }
+    .todo-list { list-style: none; padding: 0; }
+    .todo-list li { background: #f3f4f6; margin-bottom: 10px; padding: 10px 16px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .todo-list button { background: #ef4444; color: #fff; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+    .todo-list button:hover { background: #d32f2f; }
+    .input-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+    .input-row input { flex: 1; padding: 8px; border-radius: 4px; border: 1px solid #e2e8f0; }
+    .input-row button { background: #6366f1; color: #fff; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; }
+    .input-row button:hover { background: #818cf8; }
+    .note { font-size: 0.95em; color: #555; margin-top: 1rem; }
+    .api-warning { color: #d32f2f; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <h1>Sync Todo List Across Devices</h1>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab(0)">Backend API</button>
+    <button class="tab-btn" onclick="showTab(1)">Firebase</button>
+    <button class="tab-btn" onclick="showTab(2)">Supabase</button>
+  </div>
+
+
+  <!-- Backend API Example -->
+  <div class="tab-content active" id="tab-api">
+    <h2>Backend API Example (Mocked)</h2>
+    <div class="note">
+      <b>What is it?</b><br>
+      A backend API is a server (often built with Node.js, Express, Python, etc.) that stores your data in a database. Your frontend (browser) sends HTTP requests (like <code>GET</code>, <code>POST</code>, <code>DELETE</code>) to the server to add, fetch, or delete todos.<br><br>
+      <b>Architecture Diagram:</b><br>
+      <pre style="background:#f3f4f6; padding:8px; border-radius:6px; font-size:0.95em;">
+      [Browser]
+         |
+         |  (HTTP: GET/POST/DELETE)
+         v
+      [Backend API Server]
+         |
+         |  (SQL/NoSQL queries)
+         v
+      [Database]
+      </pre>
+      <b>How does it work?</b><br>
+      1. When you add a todo, the browser sends a <code>POST</code> request with a JSON body: <code>{ name: 'Task', date: '2025-10-29' }</code>.<br>
+      2. To get all todos, the browser sends a <code>GET</code> request and receives a JSON array: <code>[{ name: 'Task', date: '2025-10-29' }, ...]</code>.<br>
+      3. To delete, the browser sends a <code>DELETE</code> request with the todo's ID.<br><br>
+      <b>Data sent/received:</b><br>
+      <ul>
+        <li><b>Send:</b> <code>{ name: 'Task', date: 'YYYY-MM-DD' }</code> (as JSON)</li>
+        <li><b>Receive:</b> <code>[{ name: 'Task', date: 'YYYY-MM-DD' }, ...]</code> (as JSON array)</li>
+      </ul>
+      <b>Advantages:</b> Full control, scalable, secure with authentication.<br>
+      <b>Disadvantages:</b> Requires backend hosting and setup.<br>
+      <b>Note:</b> This demo uses a mock API (in-memory array). Replace with real API calls for production.
+    </div>
+    <div class="input-row">
+      <input id="api-task" placeholder="Task">
+      <input id="api-date" type="date">
+      <button onclick="addApiTodo()">Add</button>
+    </div>
+    <ul class="todo-list" id="api-list"></ul>
+  </div>
+
+
+  <!-- Firebase Example -->
+  <div class="tab-content" id="tab-firebase">
+    <h2>Firebase Firestore Example</h2>
+    <div class="note">
+      <b>What is it?</b><br>
+      Firebase Firestore is a cloud database by Google. It lets you store and sync data in real time across all devices using the Firebase JavaScript SDK. No backend code is needed.<br><br>
+      <b>Architecture Diagram:</b><br>
+      <pre style="background:#f3f4f6; padding:8px; border-radius:6px; font-size:0.95em;">
+      [Browser]
+         |
+         |  (Firebase SDK)
+         v
+      [Firestore Cloud Database]
+         ^
+         |  (Realtime sync)
+      [Other Browsers/Devices]
+      </pre>
+      <b>How does it work?</b><br>
+      1. When you add a todo, the browser calls <code>db.collection('todos').add({ name, date })</code>.<br>
+      2. Firestore stores each todo as a document in a <code>todos</code> collection.<br>
+      3. The browser listens for changes with <code>onSnapshot</code>, so all devices see updates instantly.<br>
+      4. To delete, the browser calls <code>doc.ref.delete()</code>.<br><br>
+      <b>Data sent/received:</b><br>
+      <ul>
+        <li><b>Send:</b> <code>{ name: 'Task', date: 'YYYY-MM-DD' }</code> (as Firestore document)</li>
+        <li><b>Receive:</b> <code>[{ id: '1', name: 'Task', date: 'YYYY-MM-DD' }, ...]</code> (as array of documents)</li>
+      </ul>
+      <b>Advantages:</b> Real-time sync, no backend management, scalable.<br>
+      <b>Disadvantages:</b> Vendor lock-in, limited querying capabilities.<br>
+      <b>Note:</b> This demo requires a Firebase project. Replace config values and set up Firestore rules.
+    </div>
+    <div class="input-row">
+      <input id="fb-task" placeholder="Task">
+      <input id="fb-date" type="date">
+      <button onclick="addFirebaseTodo()">Add</button>
+    </div>
+    <ul class="todo-list" id="fb-list"></ul>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js"></script>
+  </div>
+
+
+  <!-- Supabase Example -->
+  <div class="tab-content" id="tab-supabase">
+    <h2>Supabase Example</h2>
+    <div class="note">
+      <b>What is it?</b><br>
+      Supabase is an open-source Firebase alternative that provides a Postgres database, real-time subscriptions, and authentication. It uses SQL for queries and has a generous free tier.<br><br>
+      <b>Architecture Diagram:</b><br>
+      <pre style="background:#f3f4f6; padding:8px; border-radius:6px; font-size:0.95em;">
+      [Browser]
+         |
+         |  (Supabase JS SDK)
+         v
+      [Supabase Cloud API]
+         |
+         |  (SQL queries)
+         v
+      [PostgreSQL Database]
+      ^
+      |  (Realtime sync)
+      |
+      [Other Browsers/Devices]
+      </pre>
+      <b>How does it work?</b><br>
+      1. When you add a todo, the browser calls <code>supabase.from('todos').insert({ name, date })</code>.<br>
+      2. Supabase stores each todo as a row in the <code>todos</code> table.<br>
+      3. The browser can subscribe to changes with <code>supabase.from('todos').on('INSERT', ...)</code> for real-time updates.<br>
+      4. To delete, the browser calls <code>supabase.from('todos').delete().eq('id', todoId)</code>.<br><br>
+      <b>Data sent/received:</b><br>
+      <ul>
+        <li><b>Send:</b> <code>{ name: 'Task', date: 'YYYY-MM-DD' }</code> (as SQL insert)</li>
+        <li><b>Receive:</b> <code>[{ id: 1, name: 'Task', date: 'YYYY-MM-DD' }, ...]</code> (as array of rows)</li>
+      </ul>
+      <b>Advantages:</b> SQL support, real-time updates, open-source.<br>
+      <b>Disadvantages:</b> Requires Postgres knowledge, self-hosting complexity.<br>
+      <b>Note:</b> This demo requires a Supabase project. Replace config values and set up RLS policies.<br><br>
+      <b>Backend Details:</b><br>
+      <ul>
+        <li><b>Service:</b> Supabase is a hosted PostgreSQL database with RESTful and real-time APIs. No backend code is needed for basic use.</li>
+        <li><b>Tables:</b> You create a <code>todos</code> table with columns like <code>id</code> (serial), <code>name</code> (text), <code>date</code> (date), <code>user_id</code> (uuid, for per-user data).</li>
+        <li><b>SQL Table Example:</b>
+          <pre style="background:#f3f4f6; padding:8px; border-radius:6px; font-size:0.95em;">create table todos (
+    id serial primary key,
+    name text not null,
+    date date not null,
+    user_id uuid references auth.users(id)
+  );</pre>
+        </li>
+        <li><b>Security:</b> Use Supabase Row Level Security (RLS) and authentication to keep each user's data private.<br>
+          <b>Example RLS Policy (per-user):</b>
+          <pre style="background:#f3f4f6; padding:8px; border-radius:6px; font-size:0.95em;">create policy "Users can access their own todos" on todos
+    for all using (auth.uid() = user_id);</pre>
+        </li>
+        <li><b>Realtime:</b> Changes are pushed to all clients using Supabase's real-time engine.</li>
+        <li><b>Authentication:</b> Use Supabase Auth for login (email, OAuth, etc.).</li>
+        <li><b>Deployment:</b> All managed by Supabase, just create your project and tables in the dashboard.</li>
+      </ul>
+    </div>
+    <div class="input-row">
+      <input id="sb-task" placeholder="Task">
+      <input id="sb-date" type="date">
+      <button onclick="addSupabaseTodo()">Add</button>
+    </div>
+    <ul class="todo-list" id="sb-list"></ul>
+    <script src="https://unpkg.com/@supabase/supabase-js@1.35.6/dist/umd/supabase.js"></script>
+  </div>
+
+
+  <script>
+    function showTab(index) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-btn');
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle('active', i === index);
+        buttons[i].classList.toggle('active', i === index);
+      });
+    }
+
+    // Mock API for demonstration
+    const apiTodos = [];
+    function addApiTodo() {
+      const task = document.getElementById('api-task').value;
+      const date = document.getElementById('api-date').value;
+      if (task && date) {
+        const newTodo = { id: Date.now(), task, date };
+        apiTodos.push(newTodo);
+        document.getElementById('api-task').value = '';
+        document.getElementById('api-date').value = '';
+        renderApiTodos();
+      }
+    }
+    function renderApiTodos() {
+      const list = document.getElementById('api-list');
+      list.innerHTML = '';
+      apiTodos.forEach(todo => {
+        const li = document.createElement('li');
+        li.innerHTML = `${todo.task} - ${todo.date} <button onclick="deleteApiTodo(${todo.id})">Delete</button>`;
+        list.appendChild(li);
+      });
+    }
+    function deleteApiTodo(id) {
+      const index = apiTodos.findIndex(todo => todo.id === id);
+      if (index !== -1) {
+        apiTodos.splice(index, 1);
+        renderApiTodos();
+      }
+    }
+
+    // Firebase demo functions
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    function addFirebaseTodo() {
+      const task = document.getElementById('fb-task').value;
+      const date = document.getElementById('fb-date').value;
+      if (task && date) {
+        db.collection('todos').add({ task, date })
+          .then(() => {
+            document.getElementById('fb-task').value = '';
+            document.getElementById('fb-date').value = '';
+          });
+      }
+    }
+    db.collection('todos').onSnapshot(snapshot => {
+      const list = document.getElementById('fb-list');
+      list.innerHTML = '';
+      snapshot.forEach(doc => {
+        const li = document.createElement('li');
+        li.innerHTML = `${doc.data().task} - ${doc.data().date} <button onclick="deleteFirebaseTodo('${doc.id}')">Delete</button>`;
+        list.appendChild(li);
+      });
+    });
+    function deleteFirebaseTodo(id) {
+      db.collection('todos').doc(id).delete();
+    }
+
+    // Supabase demo functions
+    const supabaseUrl = 'https://YOUR_SUPABASE_URL.supabase.co';
+    const supabaseKey = 'YOUR_SUPABASE_KEY';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    function addSupabaseTodo() {
+      const task = document.getElementById('sb-task').value;
+      const date = document.getElementById('sb-date').value;
+      if (task && date) {
+        supabase.from('todos').insert([{ task, date }])
+          .then(() => {
+            document.getElementById('sb-task').value = '';
+            document.getElementById('sb-date').value = '';
+          });
+      }
+    }
+    supabase.from('todos').on('INSERT', payload => {
+      const list = document.getElementById('sb-list');
+      const li = document.createElement('li');
+      li.innerHTML = `${payload.new.task} - ${payload.new.date} <button onclick="deleteSupabaseTodo(${payload.new.id})">Delete</button>`;
+      list.appendChild(li);
+    }).subscribe();
+    function deleteSupabaseTodo(id) {
+      supabase.from('todos').delete().eq('id', id);
+    }
+  </script>
+</body>
+</html>

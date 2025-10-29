@@ -1,5 +1,24 @@
-const todoList = [];
 
+let todoList = [];
+
+// Load todos from localStorage
+function loadTodos() {
+    const saved = localStorage.getItem('todoList');
+    if (saved) {
+        try {
+            todoList = JSON.parse(saved);
+        } catch {
+            todoList = [];
+        }
+    }
+}
+
+// Save todos to localStorage
+function saveTodos() {
+    localStorage.setItem('todoList', JSON.stringify(todoList));
+}
+
+loadTodos();
 renderTodoList();
 
 function addTodo() {
@@ -18,9 +37,8 @@ function addTodo() {
         alert('Please fill both fields');
     } else {
         todoList.push({ name, date });
+        saveTodos();
     }
-    
-    console.log(todoList);
 
     //clearing the input fields
     inputEl.value = '';
@@ -37,6 +55,7 @@ function deleteTodo(index) {
     
     setTimeout(() => {
         todoList.splice(index, 1);
+        saveTodos();
         renderTodoList();
     }, 300);
 }

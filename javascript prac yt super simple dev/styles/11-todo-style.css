@@ -73,7 +73,7 @@ body {
 /* Container styles */
 .container {
     width: 100%;
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 30px;
     background-color: white;
